@@ -61,18 +61,19 @@
             color: #333;
             margin-bottom: 10px;
             font-size: 28px;
-            padding-right: 200px;
+            padding-right: 250px;
+            margin-top: 10px;
         }
         
         .question {
-            color: #555;
+            color: #333;
             font-size: 22px;
             margin: 20px 0;
-            font-weight: 500;
+            font-weight: 700;
         }
         
         .subtitle {
-            color: #777;
+            color: #333;
             font-size: 14px;
             font-style: italic;
             margin-bottom: 30px;
@@ -85,8 +86,8 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
+            color: #333;
+            font-weight: 700;
         }
         
         select {
@@ -138,6 +139,8 @@
             cursor: pointer;
             flex: 1;
             font-size: 16px;
+            font-weight: 600;
+            color: #333;
         }
         
         .submit-btn {
@@ -418,7 +421,7 @@
         // Language translations
         const translations = {
             en: {
-                title: "ANONYMOUS<br>INTERNATIONAL POLL",
+                title: "ANONYMOUS INTERNATIONAL POLL",
                 question: "How do you evaluate Trump's presidency in 2026?",
                 subtitle: "(An independent grassroots initiative to give a voice to citizens of democratic countries outside the USA)",
                 countryLabel: "Select your country:",
@@ -549,6 +552,12 @@
             document.getElementById('surveyPeriodResults').textContent = t.surveyPeriod;
             
             populateCountries();
+            
+            // If results are currently showing, refresh them with new language
+            if (document.getElementById('resultsSection').classList.contains('show')) {
+                const filterCountry = document.getElementById('countryFilter').value;
+                loadResults(filterCountry);
+            }
         };
 
         // Get user's IP address
@@ -753,7 +762,8 @@
 
         // Check if user already voted on page load
         window.addEventListener('load', async () => {
-            populateCountries();
+            // Initialize with English language
+            switchLanguage('en');
             
             const ip = await getUserIP();
             if (ip) {
@@ -765,8 +775,6 @@
                 }
             }
         });
-        // Initialize with English on page load
-switchLanguage('en');
     </script>
 </body>
 </html>
