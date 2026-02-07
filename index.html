@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Poll - Trump Presidency 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            position: relative;
+        }
+        
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            padding-right: 200px;
+        }
+        
+        .question {
+            color: #555;
+            font-size: 22px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        
+        .subtitle {
+            color: #777;
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .survey-period {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .results-section.show {
+            display: block;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .total-votes {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .result-bar {
+            margin-bottom: 20px;
+        }
+        
+        .result-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .bar-container {
+            width: 100%;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .bar-fill.low {
+            justify-content: flex-start;
+            padding-left: 10px;
+        }
+        
+        .percentage-outside {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .country-filter {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+        }
+        
+        .back-btn {
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .success {
+            background: #efe;
+            border: 2px solid #cfc;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+                padding-right: 0;
+                margin-top: 60px;
+            }
+            
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
+            }
+            
+            .question {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <button class="lang-btn active" onclick="switchLanguage('en')">English</button>
+            <button class="lang-btn" onclick="switchLanguage('fr')">Français</button>
+            <button class="lang-btn" onclick="switchLanguage('es')">Español</button>
+        </div>
+        
+        <!-- Poll Form -->
+        <div id="pollForm" class="poll-section">
+            <h1 id="title">ANONYMOUS INTERNATIONAL POLL</h1>
+            <p class="question" id="question">How do you evaluate Trump's presidency in 2026?</p>
+            <p class="subtitle" id="subtitle">(An independent grassroots initiative to give a voice to citizens of democratic countries outside the USA)</p>
+            
+            <form id="voteForm">
+                <div class="form-group">
+                    <label for="country" id="countryLabel">Select your country:</label>
+                    <select id="country" required>
+                        <option value="">-- Select --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label id="ratingLabel">Your evaluation:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="strongly_approve" name="rating" value="strongly_approve" required>
+                            <label for="strongly_approve" id="label_strongly_approve">Strongly approve</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="approve" name="rating" value="approve" required>
+                            <label for="approve" id="label_approve">Approve</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="neutral" name="rating" value="neutral" required>
+                            <label for="neutral" id="label_neutral">Neutral</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="disapprove" name="rating" value="disapprove" required>
+                            <label for="disapprove" id="label_disapprove">Disapprove</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="strongly_disapprove" name="rating" value="strongly_disapprove" required>
+                            <label for="strongly_disapprove" id="label_strongly_disapprove">Strongly disapprove</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Vote</button>
+            </form>
+            
+            <p class="survey-period" id="surveyPeriod">Survey period: February 10 - May 10, 2026</p>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <div class="results-header">
+                <h1 id="resultsTitle">Poll Results</h1>
+                <div class="total-votes" id="totalVotes">Total votes: 0</div>
+            </div>
+            
+            <div class="country-filter">
+                <label for="countryFilter" id="filterLabel">Filter by country (optional):</label>
+                <select id="countryFilter">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+            
+            <div id="resultsChart"></div>
+            
+            <button class="back-btn" onclick="location.reload()" id="backBtn">Back to Poll</button>
+            
+            <p class="survey-period" id="surveyPeriodResults">Survey period: February 10 - May 10, 2026</p>
+        </div>
+        
+        <div id="thankYou" style="display: none;">
+            <div class="success" id="thankYouMsg">Thank you!</div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase configuration will be added here
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, increment, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+        const firebaseConfig = {
+  apiKey: "AIzaSyAwG5in8oGwiwwRYD0m3_tCl1U2fmT4FwQ",
+  authDomain: "trump-poll-2026.firebaseapp.com",
+  projectId: "trump-poll-2026",
+  storageBucket: "trump-poll-2026.firebasestorage.app",
+  messagingSenderId: "807374750743",
+  appId: "1:807374750743:web:9078a37dc55c23e545c852"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Language translations
+        const translations = {
+            en: {
+                title: "ANONYMOUS INTERNATIONAL POLL",
+                question: "How do you evaluate Trump's presidency in 2026?",
+                subtitle: "(An independent grassroots initiative to give a voice to citizens of democratic countries outside the USA)",
+                countryLabel: "Select your country:",
+                ratingLabel: "Your evaluation:",
+                strongly_approve: "Strongly approve",
+                approve: "Approve",
+                neutral: "Neutral",
+                disapprove: "Disapprove",
+                strongly_disapprove: "Strongly disapprove",
+                submitBtn: "Submit Vote",
+                surveyPeriod: "Survey period: February 10 - May 10, 2026",
+                thankYou: "Thank you!",
+                resultsTitle: "Poll Results",
+                totalVotes: "Total votes:",
+                filterLabel: "Filter by country (optional):",
+                backBtn: "Back to Poll",
+                selectCountry: "-- Select --",
+                allCountries: "All Countries"
+            },
+            fr: {
+                title: "SONDAGE INTERNATIONAL ANONYME",
+                question: "Comment évaluez-vous la présidence de Trump en 2026?",
+                subtitle: "(Une initiative populaire indépendante pour donner la parole aux citoyens des pays démocratiques hors États-Unis)",
+                countryLabel: "Sélectionnez votre pays:",
+                ratingLabel: "Votre évaluation:",
+                strongly_approve: "J'approuve totalement",
+                approve: "J'approuve",
+                neutral: "Neutre",
+                disapprove: "Je désapprouve",
+                strongly_disapprove: "Je désapprouve totalement",
+                submitBtn: "Soumettre le vote",
+                surveyPeriod: "Période d'enquête: 10 Février - 10 Mai, 2026",
+                thankYou: "Merci!",
+                resultsTitle: "Résultats du sondage",
+                totalVotes: "Total des votes:",
+                filterLabel: "Filtrer par pays (optionnel):",
+                backBtn: "Retour au sondage",
+                selectCountry: "-- Sélectionner --",
+                allCountries: "Tous les pays"
+            },
+            es: {
+                title: "ENCUESTA INTERNACIONAL ANÓNIMA",
+                question: "¿Cómo evalúa la presidencia de Trump en 2026?",
+                subtitle: "(Una iniciativa popular independiente para dar voz a ciudadanos de países democráticos fuera de Estados Unidos)",
+                countryLabel: "Seleccione su país:",
+                ratingLabel: "Su evaluación:",
+                strongly_approve: "Apruebo totalmente",
+                approve: "Apruebo",
+                neutral: "Neutral",
+                disapprove: "Desapruebo",
+                strongly_disapprove: "Desapruebo totalmente",
+                submitBtn: "Enviar voto",
+                surveyPeriod: "Período de encuesta: 10 Febrero – 10 Mayo, 2026",
+                thankYou: "¡Gracias!",
+                resultsTitle: "Resultados de la encuesta",
+                totalVotes: "Total de votos:",
+                filterLabel: "Filtrar por país (opcional):",
+                backBtn: "Volver a la encuesta",
+                selectCountry: "-- Seleccionar --",
+                allCountries: "Todos los países"
+            }
+        };
+
+        // 74 Democratic countries (Full + Flawed democracies from Democracy Index)
+        const countries = [
+            "Argentina", "Australia", "Austria", "Belgium", "Botswana", "Brazil", "Bulgaria",
+            "Canada", "Cape Verde", "Chile", "Colombia", "Costa Rica", "Croatia", "Cyprus",
+            "Czech Republic", "Denmark", "Dominican Republic", "Estonia", "Finland", "France",
+            "Germany", "Ghana", "Greece", "Hungary", "Iceland", "India", "Indonesia", "Ireland",
+            "Israel", "Italy", "Jamaica", "Japan", "Latvia", "Lithuania", "Luxembourg", "Malaysia",
+            "Malta", "Mauritius", "Mexico", "Mongolia", "Namibia", "Netherlands", "New Zealand",
+            "Norway", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland",
+            "Portugal", "Romania", "Senegal", "Serbia", "Slovakia", "Slovenia", "South Africa",
+            "South Korea", "Spain", "Sri Lanka", "Suriname", "Sweden", "Switzerland", "Taiwan",
+            "Thailand", "Timor-Leste", "Trinidad and Tobago", "Tunisia", "Ukraine", "United Kingdom",
+            "Uruguay", "Zambia"
+        ].sort();
+
+        let currentLang = 'en';
+
+        // Populate country dropdowns
+        function populateCountries() {
+            const countrySelect = document.getElementById('country');
+            const countryFilter = document.getElementById('countryFilter');
+            
+            countrySelect.innerHTML = `<option value="">${translations[currentLang].selectCountry}</option>`;
+            countryFilter.innerHTML = `<option value="">${translations[currentLang].allCountries}</option>`;
+            
+            countries.forEach(country => {
+                const option1 = document.createElement('option');
+                option1.value = country;
+                option1.textContent = country;
+                countrySelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = country;
+                option2.textContent = country;
+                countryFilter.appendChild(option2);
+            });
+        }
+
+        // Switch language
+        window.switchLanguage = function(lang) {
+            currentLang = lang;
+            
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update all text
+            const t = translations[lang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('question').textContent = t.question;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('countryLabel').textContent = t.countryLabel;
+            document.getElementById('ratingLabel').textContent = t.ratingLabel;
+            document.getElementById('label_strongly_approve').textContent = t.strongly_approve;
+            document.getElementById('label_approve').textContent = t.approve;
+            document.getElementById('label_neutral').textContent = t.neutral;
+            document.getElementById('label_disapprove').textContent = t.disapprove;
+            document.getElementById('label_strongly_disapprove').textContent = t.strongly_disapprove;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('surveyPeriod').textContent = t.surveyPeriod;
+            document.getElementById('thankYouMsg').textContent = t.thankYou;
+            document.getElementById('resultsTitle').textContent = t.resultsTitle;
+            document.getElementById('filterLabel').textContent = t.filterLabel;
+            document.getElementById('backBtn').textContent = t.backBtn;
+            document.getElementById('surveyPeriodResults').textContent = t.surveyPeriod;
+            
+            populateCountries();
+        };
+
+        // Get user's IP address
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error getting IP:', error);
+                return null;
+            }
+        }
+
+        // Check if user has already voted
+        async function hasVoted(ip) {
+            try {
+                const votesRef = collection(db, 'votes');
+                const q = query(votesRef, where('ip', '==', ip));
+                const querySnapshot = await getDocs(q);
+                return !querySnapshot.empty;
+            } catch (error) {
+                console.error('Error checking vote:', error);
+                return false;
+            }
+        }
+
+        // Submit vote
+        async function submitVote(country, rating, ip) {
+            try {
+                // Add vote to database
+                await addDoc(collection(db, 'votes'), {
+                    country: country,
+                    rating: rating,
+                    ip: ip,
+                    timestamp: serverTimestamp()
+                });
+
+                // Update aggregated results
+                const resultDocId = `${country}_${rating}`;
+                const resultRef = doc(db, 'results', resultDocId);
+                
+                const resultDoc = await getDoc(resultRef);
+                if (resultDoc.exists()) {
+                    await updateDoc(resultRef, {
+                        count: increment(1)
+                    });
+                } else {
+                    await setDoc(resultRef, {
+                        country: country,
+                        rating: rating,
+                        count: 1
+                    });
+                }
+
+                // Update overall results
+                const overallDocId = `overall_${rating}`;
+                const overallRef = doc(db, 'results', overallDocId);
+                
+                const overallDoc = await getDoc(overallRef);
+                if (overallDoc.exists()) {
+                    await updateDoc(overallRef, {
+                        count: increment(1)
+                    });
+                } else {
+                    await setDoc(overallRef, {
+                        country: 'overall',
+                        rating: rating,
+                        count: 1
+                    });
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Error submitting vote:', error);
+                return false;
+            }
+        }
+
+        // Load and display results
+        async function loadResults(filterCountry = '') {
+            try {
+                const resultsRef = collection(db, 'results');
+                let q;
+                
+                if (filterCountry) {
+                    q = query(resultsRef, where('country', '==', filterCountry));
+                } else {
+                    q = query(resultsRef, where('country', '==', 'overall'));
+                }
+                
+                const querySnapshot = await getDocs(q);
+                
+                const results = {
+                    strongly_approve: 0,
+                    approve: 0,
+                    neutral: 0,
+                    disapprove: 0,
+                    strongly_disapprove: 0
+                };
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    results[data.rating] = data.count;
+                });
+                
+                displayResults(results);
+            } catch (error) {
+                console.error('Error loading results:', error);
+            }
+        }
+
+        // Display results with bars
+        function displayResults(results) {
+            const total = Object.values(results).reduce((a, b) => a + b, 0);
+            const t = translations[currentLang];
+            
+            document.getElementById('totalVotes').textContent = `${t.totalVotes} ${total}`;
+            
+            const chartDiv = document.getElementById('resultsChart');
+            chartDiv.innerHTML = '';
+            
+            const ratings = [
+                { key: 'strongly_approve', label: t.strongly_approve, color: '#10b981' },
+                { key: 'approve', label: t.approve, color: '#3b82f6' },
+                { key: 'neutral', label: t.neutral, color: '#8b5cf6' },
+                { key: 'disapprove', label: t.disapprove, color: '#f59e0b' },
+                { key: 'strongly_disapprove', label: t.strongly_disapprove, color: '#ef4444' }
+            ];
+            
+            ratings.forEach(rating => {
+                const count = results[rating.key] || 0;
+                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                
+                const barDiv = document.createElement('div');
+                barDiv.className = 'result-bar';
+                barDiv.innerHTML = `
+                    <div class="result-label">
+                        <span>${rating.label}</span>
+                        <span>${count} votes</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill ${percentage < 10 ? 'low' : ''}" style="width: ${percentage}%; background: ${rating.color}">
+                            ${percentage >= 10 ? percentage + '%' : ''}
+                        </div>
+                        ${percentage < 10 ? `<span class="percentage-outside">${percentage}%</span>` : ''}
+                    </div>
+                `;
+                chartDiv.appendChild(barDiv);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('voteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const country = document.getElementById('country').value;
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const ip = await getUserIP();
+            if (!ip) {
+                alert('Error: Could not verify your connection. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = translations[currentLang].submitBtn;
+                return;
+            }
+            
+            const alreadyVoted = await hasVoted(ip);
+            if (alreadyVoted) {
+                document.getElementById('pollForm').style.display = 'none';
+                document.getElementById('resultsSection').classList.add('show');
+                await loadResults();
+                return;
+            }
+            
+            const success = await submitVote(country, rating, ip);
+            
+            if (success) {
+                document.getElementById('pollForm').style.display = 'none';
+                document.getElementById('thankYou').style.display = 'block';
+                
+                setTimeout(() => {
+                    document.getElementById('thankYou').style.display = 'none';
+                    document.getElementById('resultsSection').classList.add('show');
+                    loadResults();
+                }, 2000);
+            } else {
+                alert('Error submitting vote. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = translations[currentLang].submitBtn;
+            }
+        });
+
+        // Handle country filter
+        document.getElementById('countryFilter').addEventListener('change', (e) => {
+            loadResults(e.target.value);
+        });
+
+        // Check if user already voted on page load
+        window.addEventListener('load', async () => {
+            populateCountries();
+            
+            const ip = await getUserIP();
+            if (ip) {
+                const alreadyVoted = await hasVoted(ip);
+                if (alreadyVoted) {
+                    document.getElementById('pollForm').style.display = 'none';
+                    document.getElementById('resultsSection').classList.add('show');
+                    await loadResults();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
