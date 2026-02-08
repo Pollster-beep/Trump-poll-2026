@@ -390,7 +390,7 @@
             
             <div id="resultsChart"></div>
             
-            <button class="back-btn" onclick="location.reload()" id="backBtn">Back to Poll</button>
+            <button class="back-btn" onclick="backToPoll()" id="backBtn">Back to Poll</button>
             
             <p class="survey-period" id="surveyPeriodResults">Survey period: February 10 - May 10, 2026</p>
         </div>
@@ -507,6 +507,9 @@
             const countrySelect = document.getElementById('country');
             const countryFilter = document.getElementById('countryFilter');
             
+            // Save the currently selected filter value before rebuilding
+            const currentFilterValue = countryFilter.value;
+            
             countrySelect.innerHTML = `<option value="">${translations[currentLang].selectCountry}</option>`;
             countryFilter.innerHTML = `<option value="">${translations[currentLang].allCountries}</option>`;
             
@@ -521,6 +524,11 @@
                 option2.textContent = country;
                 countryFilter.appendChild(option2);
             });
+            
+            // Restore the previously selected filter value
+            if (currentFilterValue) {
+                countryFilter.value = currentFilterValue;
+            }
         }
 
         // Switch language
@@ -769,6 +777,23 @@
         document.getElementById('countryFilter').addEventListener('change', (e) => {
             loadResults(e.target.value);
         });
+
+        // Back to Poll button - preserves current language
+        window.backToPoll = function() {
+            // Hide results section
+            document.getElementById('resultsSection').classList.remove('show');
+            
+            // Show poll form
+            document.getElementById('pollForm').style.display = 'block';
+            
+            // Reset form
+            document.getElementById('voteForm').reset();
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = translations[currentLang].submitBtn;
+            
+            // Keep current language - don't reload page!
+            console.log(`Back to poll in ${currentLang} language`);
+        };
 
         // Check if user already voted on page load
         window.addEventListener('load', async () => {
