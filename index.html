@@ -90,22 +90,6 @@
             font-weight: 700;
         }
         
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-        
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
         .radio-group {
             display: flex;
             flex-direction: column;
@@ -186,16 +170,21 @@
         }
         
         .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .results-subtitle {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
         
         .total-votes {
             font-size: 18px;
             color: #667eea;
             font-weight: 600;
+            margin-bottom: 30px;
         }
         
         .result-bar {
@@ -251,21 +240,20 @@
             border-radius: 8px;
         }
         
-        .back-btn {
-            margin-top: 30px;
-            padding: 12px 24px;
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 8px;
+        .country-filter label {
+            display: block;
+            margin-bottom: 10px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
         }
         
-        .back-btn:hover {
-            background: #667eea;
-            color: white;
+        .country-filter select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
         }
         
         .loading {
@@ -275,24 +263,28 @@
             font-size: 18px;
         }
         
-        .error {
-            background: #fee;
-            border: 2px solid #fcc;
-            color: #c33;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .success {
-            background: #efe;
-            border: 2px solid #cfc;
-            color: #3c3;
-            padding: 15px;
+        .message {
+            background: #f0f0f0;
+            border: 2px solid #667eea;
+            color: #333;
+            padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
             text-align: center;
             font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .success {
+            background: #efe;
+            border: 2px solid #3c3;
+            color: #060;
+        }
+        
+        .warning {
+            background: #ffe;
+            border: 2px solid #fc3;
+            color: #660;
         }
 
         @media (max-width: 600px) {
@@ -336,13 +328,6 @@
             
             <form id="voteForm">
                 <div class="form-group">
-                    <label for="country" id="countryLabel">Select your country:</label>
-                    <select id="country" required>
-                        <option value="">-- Select --</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
                     <label id="ratingLabel">Your evaluation:</label>
                     <div class="radio-group">
                         <div class="radio-option">
@@ -377,9 +362,12 @@
         <!-- Results Section -->
         <div id="resultsSection" class="results-section">
             <div class="results-header">
-                <h1 id="resultsTitle">Poll Results</h1>
-                <div class="total-votes" id="totalVotes">Total votes: 0</div>
+                <h1 id="resultsTitle">ANONYMOUS INTERNATIONAL POLL</h1>
+                <p class="question" id="resultsQuestion">How do you evaluate Trump's presidency in 2026?</p>
+                <p class="results-subtitle" id="resultsSubtitle">Poll Results</p>
             </div>
+            
+            <div class="total-votes" id="totalVotes">Total votes: 0</div>
             
             <div class="country-filter">
                 <label for="countryFilter" id="filterLabel">Filter by country (optional):</label>
@@ -390,29 +378,27 @@
             
             <div id="resultsChart"></div>
             
-            <button class="back-btn" onclick="backToPoll()" id="backBtn">Back to Poll</button>
-            
             <p class="survey-period" id="surveyPeriodResults">Survey period: February 10 - May 10, 2026</p>
         </div>
         
-        <div id="thankYou" style="display: none;">
-            <div class="success" id="thankYouMsg">Thank you!</div>
+        <!-- Message Display -->
+        <div id="messageDisplay" style="display: none;">
+            <div class="message" id="messageText"></div>
         </div>
     </div>
 
     <script type="module">
-        // Firebase configuration will be added here
+        // Firebase configuration
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, increment, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp, increment, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // TODO: Replace with your Firebase config
         const firebaseConfig = {
-  apiKey: "AIzaSyAwG5in8oGwiwwRYD0m3_tCl1U2fmT4FwQ",
-  authDomain: "trump-poll-2026.firebaseapp.com",
-  projectId: "trump-poll-2026",
-  storageBucket: "trump-poll-2026.firebasestorage.app",
-  messagingSenderId: "807374750743",
-  appId: "1:807374750743:web:9078a37dc55c23e545c852"
+            apiKey: "AIzaSyAwG5in8oGwiwwRYD0m3_tCl1U2fmT4FwQ",
+            authDomain: "trump-poll-2026.firebaseapp.com",
+            projectId: "trump-poll-2026",
+            storageBucket: "trump-poll-2026.firebasestorage.app",
+            messagingSenderId: "807374750743",
+            appId: "1:807374750743:web:9078a37dc55c23e545c852"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -424,7 +410,6 @@
                 title: "ANONYMOUS INTERNATIONAL POLL",
                 question: "How do you evaluate Trump's presidency in 2026?",
                 subtitle: "(An independent grassroots initiative to give a voice to citizens of democratic countries outside the USA)",
-                countryLabel: "Select your country:",
                 ratingLabel: "Your evaluation:",
                 strongly_approve: "Strongly approve",
                 approve: "Approve",
@@ -433,19 +418,48 @@
                 strongly_disapprove: "Strongly disapprove",
                 submitBtn: "Submit Vote",
                 surveyPeriod: "Survey period: February 10 - May 10, 2026",
-                thankYou: "Thank you!",
-                resultsTitle: "Poll Results",
+                thankYou: "Thank you for your vote!",
+                alreadyVoted: "You have already voted",
+                blocked: "USA citizens and citizens from non-democratic nations cannot participate",
+                resultsTitle: "ANONYMOUS INTERNATIONAL POLL",
+                resultsSubtitle: "Poll Results",
                 totalVotes: "Total votes:",
                 filterLabel: "Filter by country (optional):",
-                backBtn: "Back to Poll",
-                selectCountry: "-- Select --",
-                allCountries: "All Countries"
+                allCountries: "All Countries",
+                // Country name translations
+                countries: {
+                    "Argentina": "Argentina", "Australia": "Australia", "Austria": "Austria", 
+                    "Belgium": "Belgium", "Botswana": "Botswana", "Brazil": "Brazil", 
+                    "Bulgaria": "Bulgaria", "Canada": "Canada", "Cape Verde": "Cape Verde", 
+                    "Chile": "Chile", "Colombia": "Colombia", "Costa Rica": "Costa Rica", 
+                    "Croatia": "Croatia", "Cyprus": "Cyprus", "Czech Republic": "Czech Republic", 
+                    "Denmark": "Denmark", "Dominican Republic": "Dominican Republic", 
+                    "Estonia": "Estonia", "Finland": "Finland", "France": "France", 
+                    "Germany": "Germany", "Ghana": "Ghana", "Greece": "Greece", 
+                    "Hungary": "Hungary", "Iceland": "Iceland", "India": "India", 
+                    "Indonesia": "Indonesia", "Ireland": "Ireland", "Israel": "Israel", 
+                    "Italy": "Italy", "Jamaica": "Jamaica", "Japan": "Japan", 
+                    "Latvia": "Latvia", "Lithuania": "Lithuania", "Luxembourg": "Luxembourg", 
+                    "Malaysia": "Malaysia", "Malta": "Malta", "Mauritius": "Mauritius", 
+                    "Mexico": "Mexico", "Mongolia": "Mongolia", "Namibia": "Namibia", 
+                    "Netherlands": "Netherlands", "New Zealand": "New Zealand", 
+                    "Norway": "Norway", "Panama": "Panama", "Papua New Guinea": "Papua New Guinea", 
+                    "Paraguay": "Paraguay", "Peru": "Peru", "Philippines": "Philippines", 
+                    "Poland": "Poland", "Portugal": "Portugal", "Romania": "Romania", 
+                    "Senegal": "Senegal", "Serbia": "Serbia", "Slovakia": "Slovakia", 
+                    "Slovenia": "Slovenia", "South Africa": "South Africa", 
+                    "South Korea": "South Korea", "Spain": "Spain", "Sri Lanka": "Sri Lanka", 
+                    "Suriname": "Suriname", "Sweden": "Sweden", "Switzerland": "Switzerland", 
+                    "Taiwan": "Taiwan", "Thailand": "Thailand", "Timor-Leste": "Timor-Leste", 
+                    "Trinidad and Tobago": "Trinidad and Tobago", "Tunisia": "Tunisia", 
+                    "Ukraine": "Ukraine", "United Kingdom": "United Kingdom", 
+                    "Uruguay": "Uruguay", "Zambia": "Zambia"
+                }
             },
             fr: {
                 title: "SONDAGE INTERNATIONAL ANONYME",
                 question: "Comment évaluez-vous la présidence de Trump en 2026?",
                 subtitle: "(Une initiative populaire indépendante pour donner la parole aux citoyens des pays démocratiques hors États-Unis)",
-                countryLabel: "Sélectionnez votre pays:",
                 ratingLabel: "Votre évaluation:",
                 strongly_approve: "J'approuve totalement",
                 approve: "J'approuve",
@@ -454,19 +468,47 @@
                 strongly_disapprove: "Je désapprouve totalement",
                 submitBtn: "Soumettre le vote",
                 surveyPeriod: "Période d'enquête: 10 Février - 10 Mai, 2026",
-                thankYou: "Merci!",
-                resultsTitle: "Résultats du sondage",
+                thankYou: "Merci pour votre vote!",
+                alreadyVoted: "Vous avez déjà voté",
+                blocked: "Les citoyens américains et les citoyens de nations non démocratiques ne peuvent pas participer",
+                resultsTitle: "SONDAGE INTERNATIONAL ANONYME",
+                resultsSubtitle: "Résultats du sondage",
                 totalVotes: "Total des votes:",
                 filterLabel: "Filtrer par pays (optionnel):",
-                backBtn: "Retour au sondage",
-                selectCountry: "-- Sélectionner --",
-                allCountries: "Tous les pays"
+                allCountries: "Tous les pays",
+                countries: {
+                    "Argentina": "Argentine", "Australia": "Australie", "Austria": "Autriche",
+                    "Belgium": "Belgique", "Botswana": "Botswana", "Brazil": "Brésil",
+                    "Bulgaria": "Bulgarie", "Canada": "Canada", "Cape Verde": "Cap-Vert",
+                    "Chile": "Chili", "Colombia": "Colombie", "Costa Rica": "Costa Rica",
+                    "Croatia": "Croatie", "Cyprus": "Chypre", "Czech Republic": "République tchèque",
+                    "Denmark": "Danemark", "Dominican Republic": "République dominicaine",
+                    "Estonia": "Estonie", "Finland": "Finlande", "France": "France",
+                    "Germany": "Allemagne", "Ghana": "Ghana", "Greece": "Grèce",
+                    "Hungary": "Hongrie", "Iceland": "Islande", "India": "Inde",
+                    "Indonesia": "Indonésie", "Ireland": "Irlande", "Israel": "Israël",
+                    "Italy": "Italie", "Jamaica": "Jamaïque", "Japan": "Japon",
+                    "Latvia": "Lettonie", "Lithuania": "Lituanie", "Luxembourg": "Luxembourg",
+                    "Malaysia": "Malaisie", "Malta": "Malte", "Mauritius": "Maurice",
+                    "Mexico": "Mexique", "Mongolia": "Mongolie", "Namibia": "Namibie",
+                    "Netherlands": "Pays-Bas", "New Zealand": "Nouvelle-Zélande",
+                    "Norway": "Norvège", "Panama": "Panama", "Papua New Guinea": "Papouasie-Nouvelle-Guinée",
+                    "Paraguay": "Paraguay", "Peru": "Pérou", "Philippines": "Philippines",
+                    "Poland": "Pologne", "Portugal": "Portugal", "Romania": "Roumanie",
+                    "Senegal": "Sénégal", "Serbia": "Serbie", "Slovakia": "Slovaquie",
+                    "Slovenia": "Slovénie", "South Africa": "Afrique du Sud",
+                    "South Korea": "Corée du Sud", "Spain": "Espagne", "Sri Lanka": "Sri Lanka",
+                    "Suriname": "Suriname", "Sweden": "Suède", "Switzerland": "Suisse",
+                    "Taiwan": "Taïwan", "Thailand": "Thaïlande", "Timor-Leste": "Timor-Leste",
+                    "Trinidad and Tobago": "Trinité-et-Tobago", "Tunisia": "Tunisie",
+                    "Ukraine": "Ukraine", "United Kingdom": "Royaume-Uni",
+                    "Uruguay": "Uruguay", "Zambia": "Zambie"
+                }
             },
             es: {
                 title: "ENCUESTA INTERNACIONAL ANÓNIMA",
                 question: "¿Cómo evalúa la presidencia de Trump en 2026?",
                 subtitle: "(Una iniciativa popular independiente para dar voz a ciudadanos de países democráticos fuera de Estados Unidos)",
-                countryLabel: "Seleccione su país:",
                 ratingLabel: "Su evaluación:",
                 strongly_approve: "Apruebo totalmente",
                 approve: "Apruebo",
@@ -475,18 +517,47 @@
                 strongly_disapprove: "Desapruebo totalmente",
                 submitBtn: "Enviar voto",
                 surveyPeriod: "Período de encuesta: 10 Febrero – 10 Mayo, 2026",
-                thankYou: "¡Gracias!",
-                resultsTitle: "Resultados de la encuesta",
+                thankYou: "¡Gracias por su voto!",
+                alreadyVoted: "Ya ha votado",
+                blocked: "Los ciudadanos estadounidenses y ciudadanos de naciones no democráticas no pueden participar",
+                resultsTitle: "ENCUESTA INTERNACIONAL ANÓNIMA",
+                resultsSubtitle: "Resultados de la encuesta",
                 totalVotes: "Total de votos:",
                 filterLabel: "Filtrar por país (opcional):",
-                backBtn: "Volver a la encuesta",
-                selectCountry: "-- Seleccionar --",
-                allCountries: "Todos los países"
+                allCountries: "Todos los países",
+                countries: {
+                    "Argentina": "Argentina", "Australia": "Australia", "Austria": "Austria",
+                    "Belgium": "Bélgica", "Botswana": "Botsuana", "Brazil": "Brasil",
+                    "Bulgaria": "Bulgaria", "Canada": "Canadá", "Cape Verde": "Cabo Verde",
+                    "Chile": "Chile", "Colombia": "Colombia", "Costa Rica": "Costa Rica",
+                    "Croatia": "Croacia", "Cyprus": "Chipre", "Czech Republic": "República Checa",
+                    "Denmark": "Dinamarca", "Dominican Republic": "República Dominicana",
+                    "Estonia": "Estonia", "Finland": "Finlandia", "France": "Francia",
+                    "Germany": "Alemania", "Ghana": "Ghana", "Greece": "Grecia",
+                    "Hungary": "Hungría", "Iceland": "Islandia", "India": "India",
+                    "Indonesia": "Indonesia", "Ireland": "Irlanda", "Israel": "Israel",
+                    "Italy": "Italia", "Jamaica": "Jamaica", "Japan": "Japón",
+                    "Latvia": "Letonia", "Lithuania": "Lituania", "Luxembourg": "Luxemburgo",
+                    "Malaysia": "Malasia", "Malta": "Malta", "Mauritius": "Mauricio",
+                    "Mexico": "México", "Mongolia": "Mongolia", "Namibia": "Namibia",
+                    "Netherlands": "Países Bajos", "New Zealand": "Nueva Zelanda",
+                    "Norway": "Noruega", "Panama": "Panamá", "Papua New Guinea": "Papúa Nueva Guinea",
+                    "Paraguay": "Paraguay", "Peru": "Perú", "Philippines": "Filipinas",
+                    "Poland": "Polonia", "Portugal": "Portugal", "Romania": "Rumania",
+                    "Senegal": "Senegal", "Serbia": "Serbia", "Slovakia": "Eslovaquia",
+                    "Slovenia": "Eslovenia", "South Africa": "Sudáfrica",
+                    "South Korea": "Corea del Sur", "Spain": "España", "Sri Lanka": "Sri Lanka",
+                    "Suriname": "Surinam", "Sweden": "Suecia", "Switzerland": "Suiza",
+                    "Taiwan": "Taiwán", "Thailand": "Tailandia", "Timor-Leste": "Timor-Leste",
+                    "Trinidad and Tobago": "Trinidad y Tobago", "Tunisia": "Túnez",
+                    "Ukraine": "Ucrania", "United Kingdom": "Reino Unido",
+                    "Uruguay": "Uruguay", "Zambia": "Zambia"
+                }
             }
         };
 
-        // 74 Democratic countries (Full + Flawed democracies from Democracy Index)
-        const countries = [
+        // List of allowed democratic countries (English names - used as keys)
+        const allowedCountries = [
             "Argentina", "Australia", "Austria", "Belgium", "Botswana", "Brazil", "Bulgaria",
             "Canada", "Cape Verde", "Chile", "Colombia", "Costa Rica", "Croatia", "Cyprus",
             "Czech Republic", "Denmark", "Dominican Republic", "Estonia", "Finland", "France",
@@ -498,34 +569,33 @@
             "South Korea", "Spain", "Sri Lanka", "Suriname", "Sweden", "Switzerland", "Taiwan",
             "Thailand", "Timor-Leste", "Trinidad and Tobago", "Tunisia", "Ukraine", "United Kingdom",
             "Uruguay", "Zambia"
-        ].sort();
+        ];
 
         let currentLang = 'en';
+        let userCountry = null;
 
-        // Populate country dropdowns
-        function populateCountries() {
-            const countrySelect = document.getElementById('country');
+        // Populate country filter dropdown with translated names
+        function populateCountryFilter() {
             const countryFilter = document.getElementById('countryFilter');
-            
-            // Save the currently selected filter value before rebuilding
             const currentFilterValue = countryFilter.value;
+            const t = translations[currentLang];
             
-            countrySelect.innerHTML = `<option value="">${translations[currentLang].selectCountry}</option>`;
-            countryFilter.innerHTML = `<option value="">${translations[currentLang].allCountries}</option>`;
+            countryFilter.innerHTML = `<option value="">${t.allCountries}</option>`;
             
-            countries.forEach(country => {
-                const option1 = document.createElement('option');
-                option1.value = country;
-                option1.textContent = country;
-                countrySelect.appendChild(option1);
-                
-                const option2 = document.createElement('option');
-                option2.value = country;
-                option2.textContent = country;
-                countryFilter.appendChild(option2);
+            // Sort countries by translated name
+            const sortedCountries = [...allowedCountries].sort((a, b) => {
+                const nameA = t.countries[a] || a;
+                const nameB = t.countries[b] || b;
+                return nameA.localeCompare(nameB);
             });
             
-            // Restore the previously selected filter value
+            sortedCountries.forEach(countryKey => {
+                const option = document.createElement('option');
+                option.value = countryKey;
+                option.textContent = t.countries[countryKey] || countryKey;
+                countryFilter.appendChild(option);
+            });
+            
             if (currentFilterValue) {
                 countryFilter.value = currentFilterValue;
             }
@@ -540,7 +610,6 @@
             if (event && event.target) {
                 event.target.classList.add('active');
             } else {
-                // If no event (e.g., called programmatically), find and activate the button
                 const buttons = document.querySelectorAll('.lang-btn');
                 buttons.forEach(btn => {
                     if (btn.textContent === 'English' && lang === 'en') btn.classList.add('active');
@@ -551,10 +620,9 @@
             
             // Update all text
             const t = translations[lang];
-            document.getElementById('title').innerHTML = t.title;
+            document.getElementById('title').textContent = t.title;
             document.getElementById('question').textContent = t.question;
             document.getElementById('subtitle').textContent = t.subtitle;
-            document.getElementById('countryLabel').textContent = t.countryLabel;
             document.getElementById('ratingLabel').textContent = t.ratingLabel;
             document.getElementById('label_strongly_approve').textContent = t.strongly_approve;
             document.getElementById('label_approve').textContent = t.approve;
@@ -563,35 +631,47 @@
             document.getElementById('label_strongly_disapprove').textContent = t.strongly_disapprove;
             document.getElementById('submitBtn').textContent = t.submitBtn;
             document.getElementById('surveyPeriod').textContent = t.surveyPeriod;
-            document.getElementById('thankYouMsg').textContent = t.thankYou;
             document.getElementById('resultsTitle').textContent = t.resultsTitle;
+            document.getElementById('resultsQuestion').textContent = t.question;
+            document.getElementById('resultsSubtitle').textContent = t.resultsSubtitle;
             document.getElementById('filterLabel').textContent = t.filterLabel;
-            document.getElementById('backBtn').textContent = t.backBtn;
             document.getElementById('surveyPeriodResults').textContent = t.surveyPeriod;
             
-            populateCountries();
+            populateCountryFilter();
             
-            // If results are currently showing, refresh them with new language
+            // If results are showing, refresh them with new language
             if (document.getElementById('resultsSection').classList.contains('show')) {
                 const filterCountry = document.getElementById('countryFilter').value;
                 loadResults(filterCountry);
             }
         };
 
-        // Get user's IP address
-        async function getUserIP() {
+        // Get user's IP and country
+        async function getUserLocation() {
             try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
+                // First get IP
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const ip = ipData.ip;
+                
+                // Then get country from IP
+                const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const geoData = await geoResponse.json();
+                
+                return {
+                    ip: ip,
+                    country: geoData.country_name || 'Unknown'
+                };
             } catch (error) {
-                console.error('Error getting IP:', error);
-                return null;
+                console.error('Error getting location:', error);
+                return { ip: null, country: 'Unknown' };
             }
         }
 
         // Check if user has already voted
         async function hasVoted(ip) {
+            if (!ip) return false;
+            
             try {
                 const votesRef = collection(db, 'votes');
                 const q = query(votesRef, where('ip', '==', ip));
@@ -599,8 +679,42 @@
                 return !querySnapshot.empty;
             } catch (error) {
                 console.error('Error checking vote:', error);
+                // If there's an error checking, block voting to be safe
+                return true;
+            }
+        }
+
+        // Check if country is allowed to vote
+        function isCountryAllowed(country) {
+            // Block USA
+            if (country === 'United States' || country === 'USA') {
                 return false;
             }
+            
+            // Check if country is in allowed list
+            return allowedCountries.includes(country);
+        }
+
+        // Show message and redirect to results
+        function showMessageAndRedirect(messageKey, duration, isSuccess = false) {
+            const t = translations[currentLang];
+            
+            document.getElementById('pollForm').style.display = 'none';
+            document.getElementById('messageDisplay').style.display = 'block';
+            
+            const messageDiv = document.getElementById('messageText');
+            messageDiv.textContent = t[messageKey];
+            messageDiv.className = isSuccess ? 'message success' : 'message warning';
+            
+            setTimeout(() => {
+                document.getElementById('messageDisplay').style.display = 'none';
+                document.getElementById('resultsSection').classList.add('show');
+                
+                // Reset country filter to show all countries
+                document.getElementById('countryFilter').value = '';
+                
+                loadResults();
+            }, duration);
         }
 
         // Submit vote
@@ -614,17 +728,17 @@
                     timestamp: serverTimestamp()
                 });
 
-                // Update aggregated results
-                const resultDocId = `${country}_${rating}`;
-                const resultRef = doc(db, 'results', resultDocId);
+                // Update country-specific results
+                const countryDocId = `${country}_${rating}`;
+                const countryRef = doc(db, 'results', countryDocId);
                 
-                const resultDoc = await getDoc(resultRef);
-                if (resultDoc.exists()) {
-                    await updateDoc(resultRef, {
+                const countryDoc = await getDoc(countryRef);
+                if (countryDoc.exists()) {
+                    await updateDoc(countryRef, {
                         count: increment(1)
                     });
                 } else {
-                    await setDoc(resultRef, {
+                    await setDoc(countryRef, {
                         country: country,
                         rating: rating,
                         count: 1
@@ -679,7 +793,9 @@
                 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    results[data.rating] = data.count;
+                    if (data.rating && results.hasOwnProperty(data.rating)) {
+                        results[data.rating] = data.count || 0;
+                    }
                 });
                 
                 displayResults(results);
@@ -699,11 +815,11 @@
             chartDiv.innerHTML = '';
             
             const ratings = [
-                { key: 'strongly_approve', label: t.strongly_approve, color: '#10b981' },
-                { key: 'approve', label: t.approve, color: '#3b82f6' },
-                { key: 'neutral', label: t.neutral, color: '#8b5cf6' },
-                { key: 'disapprove', label: t.disapprove, color: '#f59e0b' },
-                { key: 'strongly_disapprove', label: t.strongly_disapprove, color: '#ef4444' }
+                { key: 'strongly_approve', color: '#10b981' },
+                { key: 'approve', color: '#3b82f6' },
+                { key: 'neutral', color: '#8b5cf6' },
+                { key: 'disapprove', color: '#f59e0b' },
+                { key: 'strongly_disapprove', color: '#ef4444' }
             ];
             
             ratings.forEach(rating => {
@@ -714,8 +830,8 @@
                 barDiv.className = 'result-bar';
                 barDiv.innerHTML = `
                     <div class="result-label">
-                        <span>${rating.label}</span>
-                        <span>${count} votes</span>
+                        <span>${t[rating.key]}</span>
+                        <span>${count} ${count === 1 ? 'vote' : 'votes'}</span>
                     </div>
                     <div class="bar-container">
                         <div class="bar-fill ${percentage < 10 ? 'low' : ''}" style="width: ${percentage}%; background: ${rating.color}">
@@ -732,40 +848,16 @@
         document.getElementById('voteForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const country = document.getElementById('country').value;
             const rating = document.querySelector('input[name="rating"]:checked').value;
             const submitBtn = document.getElementById('submitBtn');
             
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
             
-            const ip = await getUserIP();
-            if (!ip) {
-                alert('Error: Could not verify your connection. Please try again.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = translations[currentLang].submitBtn;
-                return;
-            }
-            
-            const alreadyVoted = await hasVoted(ip);
-            if (alreadyVoted) {
-                document.getElementById('pollForm').style.display = 'none';
-                document.getElementById('resultsSection').classList.add('show');
-                await loadResults();
-                return;
-            }
-            
-            const success = await submitVote(country, rating, ip);
+            const success = await submitVote(userCountry, rating, window.userIP);
             
             if (success) {
-                document.getElementById('pollForm').style.display = 'none';
-                document.getElementById('thankYou').style.display = 'block';
-                
-                setTimeout(() => {
-                    document.getElementById('thankYou').style.display = 'none';
-                    document.getElementById('resultsSection').classList.add('show');
-                    loadResults();
-                }, 2000);
+                showMessageAndRedirect('thankYou', 3000, true);
             } else {
                 alert('Error submitting vote. Please try again.');
                 submitBtn.disabled = false;
@@ -778,37 +870,36 @@
             loadResults(e.target.value);
         });
 
-        // Back to Poll button - preserves current language
-        window.backToPoll = function() {
-            // Hide results section
-            document.getElementById('resultsSection').classList.remove('show');
-            
-            // Show poll form
-            document.getElementById('pollForm').style.display = 'block';
-            
-            // Reset form
-            document.getElementById('voteForm').reset();
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').textContent = translations[currentLang].submitBtn;
-            
-            // Keep current language - don't reload page!
-            console.log(`Back to poll in ${currentLang} language`);
-        };
-
-        // Check if user already voted on page load
+        // Initialize on page load
         window.addEventListener('load', async () => {
-            // Initialize with English language
             switchLanguage('en');
             
-            const ip = await getUserIP();
-            if (ip) {
-                const alreadyVoted = await hasVoted(ip);
-                if (alreadyVoted) {
-                    document.getElementById('pollForm').style.display = 'none';
-                    document.getElementById('resultsSection').classList.add('show');
-                    await loadResults();
-                }
+            const location = await getUserLocation();
+            window.userIP = location.ip;
+            userCountry = location.country;
+            
+            console.log('User location:', location);
+            
+            if (!location.ip) {
+                alert('Could not verify your connection. Please check your internet and try again.');
+                return;
             }
+            
+            // Check if already voted
+            const alreadyVoted = await hasVoted(location.ip);
+            if (alreadyVoted) {
+                showMessageAndRedirect('alreadyVoted', 2000);
+                return;
+            }
+            
+            // Check if country is allowed
+            if (!isCountryAllowed(userCountry)) {
+                showMessageAndRedirect('blocked', 5000);
+                return;
+            }
+            
+            // If we get here, user can vote
+            document.getElementById('pollForm').style.display = 'block';
         });
     </script>
 </body>
