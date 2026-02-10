@@ -700,6 +700,7 @@
             const t = translations[currentLang];
             
             document.getElementById('pollForm').style.display = 'none';
+            document.getElementById('resultsSection').classList.remove('show');
             document.getElementById('messageDisplay').style.display = 'block';
             
             const messageDiv = document.getElementById('messageText');
