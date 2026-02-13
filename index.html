@@ -721,6 +721,14 @@
         // Submit vote
         async function submitVote(country, rating, ip) {
             try {
+                // CRITICAL: Re-check for duplicate vote right before writing
+                // This closes the race condition where multiple tabs pass the initial check
+                const alreadyVoted = await hasVoted(ip);
+                if (alreadyVoted) {
+                    showMessageAndRedirect('alreadyVoted', 2000);
+                    return 'duplicate';
+                }
+
                 // Add vote to database
                 await addDoc(collection(db, 'votes'), {
                     country: country,
@@ -857,8 +865,10 @@
             
             const success = await submitVote(userCountry, rating, window.userIP);
             
-            if (success) {
+            if (success === true) {
                 showMessageAndRedirect('thankYou', 3000, true);
+            } else if (success === 'duplicate') {
+                // Already handled inside submitVote - do nothing here
             } else {
                 alert('Error submitting vote. Please try again.');
                 submitBtn.disabled = false;
